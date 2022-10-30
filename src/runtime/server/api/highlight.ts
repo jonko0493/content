@@ -1,5 +1,5 @@
 import { /* createError, */defineEventHandler, readBody, lazyEventHandler } from 'h3'
-import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
+import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme, ILanguageRegistration } from 'shiki-es'
 import consola from 'consola'
 import { HighlightParams, HighlightThemedToken } from '../../types'
 import mdcTMLanguage from '../../assets/mdc.tmLanguage.json'
@@ -89,11 +89,6 @@ export default lazyEventHandler(async () => {
     const params = await readBody<Partial<HighlightParams>>(event)
 
     const { code, lang, theme = { default: highlighter.getTheme() } } = resolveBody(params)
-
-    // Skip highlight if lang is not supported
-    if (!lang) {
-      return [[{ content: code }]]
-    }
 
     // Load supported language on-demand
     if (!highlighter.getLoadedLanguages().includes(lang)) {
